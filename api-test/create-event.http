@@ -1,10 +1,10 @@
 POST http://localhost:8080/event
 Content-Type: application/json
+Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFiY2RAZ21haWwuY29tIiwiZXhwIjoxNzU2MjAyNDgzLCJ1c2VySWQiOjJ9.F_KCufRO1oxsnKxq8O-iAarZTKhuLNVrvI4hUlEXShs
 
 {
-  "name": "Sample Event 2",
+  "name": "District Meetup",
   "dateTime": "2025-07-01T10:00:00.000Z",
-  "location": "123 Main St, Anytown, USA",
-  "description": "This is a sample event for testing purposes.",
-  "user_id": 124
+  "location": "123 Main St, Anytown, Jharkhand",
+  "description": "This is a true event for testing purposes."
 }

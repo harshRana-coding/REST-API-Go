@@ -18,6 +18,7 @@ func getEvents(context *gin.Context) {
 }
 
 func createEvent(context *gin.Context) {
+	userId := context.GetInt64("userId")
 	var event models.Event
 	err := context.ShouldBindJSON(&event)
 	if err != nil {
@@ -25,8 +26,7 @@ func createEvent(context *gin.Context) {
 		return
 	}
 
-	event.ID = 1
-	event.UserID = 1
+	event.UserID = userId
 
 	err = event.Save()
 	if err != nil {
@@ -56,15 +56,21 @@ func getEvent(context *gin.Context) {
 }
 
 func updateEvent(context *gin.Context) {
+	userId := context.GetInt64("userId")
 	id := context.Param("id")
 	intId, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid event ID"})
 		return
 	}
-	_, err = models.GetEventById(intId)
+	event, err := models.GetEventById(intId)
 	if err != nil {
 		context.JSON(http.StatusNotFound, gin.H{"error": "Could not retrieve event"})
+		return
+	}
+
+	if event.UserID != userId {
+		context.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to update this event"})
 		return
 	}
 
@@ -96,9 +102,14 @@ func deleteEvent(context *gin.Context) {
 		return
 	}
 	// check if the event exists
-	_, err = models.GetEventById(intId)
+	event, err := models.GetEventById(intId)
 	if err != nil {
 		context.JSON(http.StatusNotFound, gin.H{"error": "Could not retrieve event"})
+		return
+	}
+	userId := context.GetInt64("userId")
+	if event.UserID != userId {
+		context.JSON(http.StatusForbidden, gin.H{"error": "You are not allowed to delete this event"})
 		return
 	}
 
